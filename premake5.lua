@@ -22,30 +22,33 @@ project "ConsoleGameCreator"
   targetdir ("bin/" .. outputdir .. "/%{prj.name}")
   objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
 
-  pchheader "cgcpch.h"
+   pchheader "cgcpch.h"
+   pchsource "ConsoleGameCreator/src/cgcpch.cpp"
 
   files {
-    "%{prj.name}/src/*.h",
-    "%{prj.name}/src/*.cpp"
+    "%{prj.name}/src/**.h",
+    "%{prj.name}/src/**.cpp"
   }
 
   defines {}
 
-  includedirs {}
+  includedirs {
+    "%{prj.name}/src"
+  }
 
   links {}
 
   filter "system:windows"
     systemversion "latest"
-    defines "CGC_Windows"
+    defines "CGC_WINDOWS"
 
   filter "configurations:Debug*"
-    defines "CGC_Debug"
+    defines "CGC_DEBUG"
     runtime "Debug"
     symbols "on"
   
   filter "configurations:Release*"
-    defines "CGC_Release"
+    defines "CGC_RELEASE"
     runtime "Release"
     optimize "on"
   
@@ -75,14 +78,14 @@ project "Sandbox"
 
   filter "system:windows"
     systemversion "latest"
-    defines "CGC_Windows"
+    defines "CGC_WINDOWS"
 
   filter "configurations:Debug*"
-    defines "CGC_Debug"
+    defines "CGC_DEBUG"
     runtime "Debug"
     symbols "on"
   
   filter "configurations:Release*"
-    defines "CGC_Release"
+    defines "CGC_RELEASE"
     runtime "Release"
     optimize "on"
