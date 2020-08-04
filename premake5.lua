@@ -1,17 +1,15 @@
 workspace "ConsoleGameCreator"
   configurations {
-    "Debug32", "Release32",
-    "Debug64", "Release64"
+    "Debug", "Release"
   }
 
+  architecture "x86_64"
   startproject "Sandbox"
 
-  filter "configurations:*32"
-    architecture "x86"
-  filter "configurations:*64"
-    architecture "x86_64"
-
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
+
+includedir = {}
+includedir["fmt"] = "ConsoleGameCreator/vendor/fmt/include"
 
 project "ConsoleGameCreator"
   location "ConsoleGameCreator"
@@ -27,13 +25,15 @@ project "ConsoleGameCreator"
 
   files {
     "%{prj.name}/src/**.h",
-    "%{prj.name}/src/**.cpp"
+    "%{prj.name}/src/**.cpp",
+    "%{prj.name}/vendor/fmt/include/fmt/**.h"
   }
 
   defines {}
 
   includedirs {
-    "%{prj.name}/src"
+    "%{prj.name}/src",
+    includedir["fmt"]
   }
 
   links {}
@@ -62,14 +62,15 @@ project "Sandbox"
   objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
 
   files {
-    "%{prj.name}/src/*.h",
-    "%{prj.name}/src/*.cpp"
+    "%{prj.name}/src/**.h",
+    "%{prj.name}/src/**.cpp"
   }
 
   defines {}
 
   includedirs {
-    "ConsoleGameCreator/src"
+    "ConsoleGameCreator/src",
+    includedir["fmt"]
   }
 
   links {
