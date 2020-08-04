@@ -1,0 +1,3 @@
+[submodule "ConsoleGameCreator\\vendor\\fmt"]
+	path = ConsoleGameCreator\\vendor\\fmt
+	url = https://github.com/fmtlib/fmt.git
