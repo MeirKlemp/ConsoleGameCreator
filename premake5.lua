@@ -22,6 +22,8 @@ project "ConsoleGameCreator"
   targetdir ("bin/" .. outputdir .. "/%{prj.name}")
   objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
 
+  pchheader "cgcpch.h"
+
   files {
     "%{prj.name}/src/*.h",
     "%{prj.name}/src/*.cpp"
