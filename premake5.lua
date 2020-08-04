@@ -29,7 +29,9 @@ project "ConsoleGameCreator"
     "%{prj.name}/vendor/fmt/include/fmt/**.h"
   }
 
-  defines {}
+  defines {
+    "FMT_HEADER_ONLY"
+  }
 
   includedirs {
     "%{prj.name}/src",
@@ -66,7 +68,9 @@ project "Sandbox"
     "%{prj.name}/src/**.cpp"
   }
 
-  defines {}
+  defines {
+    "FMT_HEADER_ONLY"
+  }
 
   includedirs {
     "ConsoleGameCreator/src",
