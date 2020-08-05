@@ -10,7 +10,7 @@ namespace cgc {
   private:
     Application();
   private:
-    static Application* instance;
+    static Application* s_instance;
   };
 }
 

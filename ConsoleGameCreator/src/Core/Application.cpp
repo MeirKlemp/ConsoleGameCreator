@@ -2,10 +2,10 @@
 #include "Application.h"
 
 namespace cgc {
-  Application* Application::instance = new Application();
+  Application* Application::s_instance = new Application();
 
   Application* Application::get() {
-    return instance;
+    return s_instance;
   }
 
   Application::Application() {
