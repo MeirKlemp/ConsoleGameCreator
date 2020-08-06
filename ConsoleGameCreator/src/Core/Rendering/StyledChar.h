@@ -1,5 +1,5 @@
 #pragma once
-#include <Core/Rendering/Style.h>
+#include "Style.h"
 #include <fmt/format.h>
 
 namespace cgc {
@@ -9,6 +9,12 @@ namespace cgc {
       : ch(ch), style(style) {}
     inline void print() const {
       fmt::print(style, "{}", *this);
+    }
+    bool operator==(const StyledChar& rhs) const {
+      return ch == rhs.ch && style == rhs.style;
+    }
+    bool operator!=(const StyledChar& rhs) const {
+      return !operator==(rhs);
     }
   public:
     char16_t ch;

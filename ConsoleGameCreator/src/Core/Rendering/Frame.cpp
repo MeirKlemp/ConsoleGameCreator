@@ -1,28 +1,16 @@
-#include <cgcpch.h>
-#include <Core/Rendering/Frame.h>
-#include <Core/Debug.h>
+#include "cgcpch.h"
+#include "Frame.h"
+#include "Core/Debug.h"
 
 namespace cgc {
   Frame::Frame(size_t _rows, size_t _columns, StyledChar defaultChar)
     : m_rows(_rows), m_columns(_columns) {
-    m_buffer = new StyledChar* [m_rows];
-    for (size_t r = 0; r < rows(); r++) {
-      m_buffer[r] = new StyledChar[m_columns];
-      for (size_t c = 0; c < columns(); c++) {
-        m_buffer[r][c] = defaultChar;
-      }
-    }
+    setBuffer(defaultChar);
   }
 
   Frame::Frame(const Frame& rhs)
     : m_rows(rhs.m_rows), m_columns(rhs.m_columns) {
-    m_buffer = new StyledChar* [m_rows];
-    for (size_t r = 0; r < rows(); r++) {
-      m_buffer[r] = new StyledChar[m_columns];
-      for (size_t c = 0; c < columns(); c++) {
-        m_buffer[r][c] = rhs.m_buffer[r][c];
-      }
-    }
+    setBuffer(rhs.m_buffer);
   }
 
   Frame::Frame(Frame&& rhs) noexcept
@@ -32,12 +20,7 @@ namespace cgc {
   }
 
   Frame::~Frame() {
-    if (!m_buffer) return;
-
-    for (size_t r = 0; r < rows(); r++) {
-      delete[] m_buffer[r];
-    }
-    delete[] m_buffer;
+    deleteBuffer();
   }
 
   size_t Frame::rows() const {
@@ -48,8 +31,25 @@ namespace cgc {
     return m_columns;
   }
 
-  size_t Frame::length() const {
-    return m_rows * m_columns;
+  std::pair<size_t, size_t> Frame::size() const {
+    return std::make_pair(m_rows, m_columns);
+  }
+
+  Frame& Frame::operator=(const Frame& rhs) {
+    deleteBuffer();
+
+    m_rows = rhs.m_rows;
+    m_columns = rhs.m_columns;
+
+    setBuffer(rhs.m_buffer);
+  }
+
+  Frame& Frame::operator=(Frame&& rhs) noexcept {
+    m_rows = rhs.m_rows;
+    m_columns = rhs.m_columns;
+
+    m_buffer = rhs.m_buffer;
+    rhs.m_buffer = nullptr;
   }
 
   StyledChar Frame::get(size_t row, size_t column) const {
@@ -122,5 +122,33 @@ namespace cgc {
     }
 
     return length;
+  }
+
+  void Frame::setBuffer(StyledChar defaultChar) {
+    m_buffer = new StyledChar* [m_rows];
+    for (size_t r = 0; r < m_rows; r++) {
+      m_buffer[r] = new StyledChar[m_columns];
+      for (size_t c = 0; c < m_columns; c++) {
+        m_buffer[r][c] = defaultChar;
+      }
+    }
+  }
+  void Frame::setBuffer(StyledChar** buffer) {
+    m_buffer = new StyledChar* [m_rows];
+    for (size_t r = 0; r < m_rows; r++) {
+      m_buffer[r] = new StyledChar[m_columns];
+      for (size_t c = 0; c < m_columns; c++) {
+        m_buffer[r][c] = buffer[r][c];
+      }
+    }
+  }
+
+  void Frame::deleteBuffer() {
+    if (!m_buffer) return;
+
+    for (size_t r = 0; r < rows(); r++) {
+      delete[] m_buffer[r];
+    }
+    delete[] m_buffer;
   }
 }

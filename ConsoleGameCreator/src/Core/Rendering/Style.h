@@ -161,6 +161,12 @@ namespace cgc {
     operator fmt::rgb() const {
       return fmt::rgb(r, g, b);
     }
+    bool operator==(const Color& rhs) const {
+      return r == rhs.r && g == rhs.g && b == rhs.b;
+    }
+    bool operator!=(const Color& rhs) const {
+      return !operator==(rhs);
+    }
     uint8_t r, g, b;
   };
 
@@ -177,6 +183,14 @@ namespace cgc {
       : foreground(fg), background(bg), emphasis(emphasis) {}
     operator fmt::text_style() const {
       return fg(fmt::rgb(foreground)) | bg(fmt::rgb(background)) | fmt::emphasis(emphasis);
+    }
+    bool operator==(const Style& rhs) const {
+      return foreground == rhs.foreground
+        && background == rhs.background
+        && emphasis == rhs.emphasis;
+    }
+    bool operator!=(const Style& rhs) const {
+      return !operator==(rhs);
     }
     Color foreground;
     Color background;

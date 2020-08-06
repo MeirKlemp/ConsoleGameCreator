@@ -13,7 +13,10 @@ namespace cgc {
 
     size_t rows() const;
     size_t columns() const;
-    size_t length() const;
+    std::pair<size_t, size_t> size() const;
+
+    Frame& operator=(const Frame& rhs);
+    Frame& operator=(Frame&& rhs) noexcept;
 
     StyledChar get(size_t row, size_t column) const;
     void set(size_t row, size_t column, StyledChar val);
@@ -33,6 +36,9 @@ namespace cgc {
     }
   private:
     size_t strToBuffer(size_t row, size_t column, const std::u16string& str, Style style);
+    void setBuffer(StyledChar defaultChar);
+    void setBuffer(StyledChar** buffer);
+    void deleteBuffer();
   public:
     bool wrapping = false;
   private:
