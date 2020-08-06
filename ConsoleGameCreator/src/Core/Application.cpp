@@ -14,7 +14,7 @@ namespace cgc {
     while (running) {
       Frame frame = m_console->newFrame();
 
-      Style style(Colors::azure, Colors::green_yellow, Emphasis::underline);
+      Style style(Colors::red, Colors::green_yellow, Emphasis::underline);
       frame.write(0, 0, u"Hello, world", style);
 
       m_console->draw(frame);
@@ -24,7 +24,7 @@ namespace cgc {
     running = false;
   }
 
-  const Console& Application::console() const {
+  Console& Application::console() {
     return *m_console;
   }
 

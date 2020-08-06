@@ -6,14 +6,16 @@
 namespace cgc {
   class Frame {
   public:
-    Frame(size_t rows, size_t columns, StyledChar defaultChar = ' ');
+    Frame(size_t rows = 0, size_t columns = 0, StyledChar defaultChar = ' ');
     Frame(const Frame& rhs);
     Frame(Frame&& rhs) noexcept;
     virtual ~Frame();
 
     size_t rows() const;
     size_t columns() const;
+
     std::pair<size_t, size_t> size() const;
+    void setSize(size_t rows, size_t columns, StyledChar defaultChar = ' ');
 
     Frame& operator=(const Frame& rhs);
     Frame& operator=(Frame&& rhs) noexcept;
@@ -38,6 +40,7 @@ namespace cgc {
     size_t strToBuffer(size_t row, size_t column, const std::u16string& str, Style style);
     void setBuffer(StyledChar defaultChar);
     void setBuffer(StyledChar** buffer);
+    void setBuffer(const Frame& frame, StyledChar defaultChar);
     void deleteBuffer();
   public:
     bool wrapping = false;

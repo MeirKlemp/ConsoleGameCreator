@@ -9,7 +9,7 @@ namespace cgc {
     void run();
     void end();
 
-    const Console& console() const;
+    Console& console();
 
     static Application* get();
   private:

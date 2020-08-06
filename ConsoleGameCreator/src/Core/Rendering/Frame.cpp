@@ -35,6 +35,13 @@ namespace cgc {
     return std::make_pair(m_rows, m_columns);
   }
 
+  void Frame::setSize(size_t rows, size_t columns, StyledChar defaultChar) {
+    Frame frame(std::move(*this));
+    m_rows = rows;
+    m_columns = columns;
+    setBuffer(frame, defaultChar);
+  }
+
   Frame& Frame::operator=(const Frame& rhs) {
     deleteBuffer();
 
@@ -42,14 +49,20 @@ namespace cgc {
     m_columns = rhs.m_columns;
 
     setBuffer(rhs.m_buffer);
+
+    return *this;
   }
 
   Frame& Frame::operator=(Frame&& rhs) noexcept {
+    deleteBuffer();
+
     m_rows = rhs.m_rows;
     m_columns = rhs.m_columns;
 
     m_buffer = rhs.m_buffer;
     rhs.m_buffer = nullptr;
+
+    return *this;
   }
 
   StyledChar Frame::get(size_t row, size_t column) const {
@@ -139,6 +152,21 @@ namespace cgc {
       m_buffer[r] = new StyledChar[m_columns];
       for (size_t c = 0; c < m_columns; c++) {
         m_buffer[r][c] = buffer[r][c];
+      }
+    }
+  }
+
+  void Frame::setBuffer(const Frame& frame, StyledChar defaultChar) {
+    m_buffer = new StyledChar* [m_rows];
+    for (size_t r = 0; r < m_rows; r++) {
+      m_buffer[r] = new StyledChar[m_columns];
+      for (size_t c = 0; c < m_columns; c++) {
+        if (r < frame.rows() && c < frame.columns()) {
+          m_buffer[r][c] = frame.m_buffer[r][c];
+        }
+        else {
+          m_buffer[r][c] = defaultChar;
+        }
       }
     }
   }

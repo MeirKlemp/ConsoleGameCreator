@@ -1,5 +1,6 @@
 #include "cgcpch.h"
 #include "Console.h"
+#include "WindowsConsole.h"
 
 namespace cgc {
   Frame Console::newFrame() const {
@@ -10,7 +11,7 @@ namespace cgc {
   void Console::draw(const Frame& newFrame) {
     if (m_frame.size() != newFrame.size()) {
       auto [rows, columns] = newFrame.size();
-      m_frame = Frame(rows, columns);
+      m_frame.setSize(rows, columns);
     }
 
     for (size_t r = 0; r < m_frame.rows(); r++) {
@@ -30,6 +31,7 @@ namespace cgc {
 
   std::unique_ptr<Console> Console::platformConsole() {
 #ifdef CGC_WINDOWS
+    return std::make_unique<WindowsConsole>();
 #else
 #error "This platform is not supported yet."
 #endif
