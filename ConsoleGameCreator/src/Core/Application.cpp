@@ -11,16 +11,22 @@ namespace cgc {
 
   void Application::run() {
     running = true;
+    time.start();
+
     while (running) {
+      time.update();
+
       Frame frame = m_console->newFrame();
 
       Style style(Colors::red, Colors::green_yellow, Emphasis::underline);
-      frame.write(0, 0, u"Hello, world", style);
+      frame.writef(0, 0, u"time(ms): {}", style, time.time());
+      frame.writef(1, 0, u"fps: {:.2f}", style, 1 / time.deltaTimeS());
+      frame.writef(2, 0, u"dt(ms): {}", style, time.deltaTimeMS());
 
       m_console->draw(frame);
     }
   }
-  void Application::end() {
+  void Application::close() {
     running = false;
   }
 

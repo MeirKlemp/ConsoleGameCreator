@@ -1,6 +1,5 @@
 #include "cgcpch.h"
 #include "Frame.h"
-#include "Core/Debug.h"
 
 namespace cgc {
   Frame::Frame(size_t _rows, size_t _columns, StyledChar defaultChar)

@@ -1,5 +1,6 @@
 #pragma once
 #include "Platform/Console.h"
+#include "Time.h"
 
 namespace cgc {
   class Application {
@@ -7,7 +8,7 @@ namespace cgc {
     virtual ~Application();
 
     void run();
-    void end();
+    void close();
 
     Console& console();
 
@@ -17,6 +18,7 @@ namespace cgc {
   private:
     bool running = false;
     std::unique_ptr<Console> m_console;
+    Time time;
 
     static Application* s_instance;
   };

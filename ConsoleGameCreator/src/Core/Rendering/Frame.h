@@ -1,6 +1,8 @@
 #pragma once
-#include <cgcpch.h>
-#include <Core/Rendering/StyledChar.h>
+#include "cgcpch.h"
+#include "Core/Rendering/StyledChar.h"
+#include "Core/Debug.h"
+
 #include <fmt/format.h>
 
 namespace cgc {
