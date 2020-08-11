@@ -3,12 +3,14 @@
 #if CGC_WINDOWS
 #include "Console.h"
 
+#include <Windows.h>
+
 namespace cgc {
   class WindowsConsole : public Console {
   public:
     WindowsConsole();
 
-    virtual std::vector<std::shared_ptr<Event>> events() const override;
+    virtual std::vector<std::shared_ptr<Event>> events() override;
     virtual std::u16string getTitle() const override;
     virtual void setTitle(const std::u16string& title) override;
     virtual std::pair<size_t, size_t> getSize() const override;
@@ -18,8 +20,8 @@ namespace cgc {
     virtual void setCursorVisible(bool visible) override;
 
   private:
-  private:
-    void* m_hout, *m_hin;
+    HANDLE m_hout, m_hin;
+    MOUSE_EVENT_RECORD m_lastMouseEvent;
   };
 }
 #endif

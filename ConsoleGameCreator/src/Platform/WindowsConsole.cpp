@@ -4,8 +4,7 @@
 #include "WindowsConsole.h"
 #include "Core/Events/KeyEvent.h"
 #include "Core/Events/KeyTypedEvent.h"
-
-#include <Windows.h>
+#include "Core/Events/MouseClickEvent.h"
 
 namespace cgc {
   WindowsConsole::WindowsConsole() {
@@ -16,13 +15,13 @@ namespace cgc {
     setCursorVisible(false);
 
     // Make console not selectable by user.
-    DWORD prev_mode;
-    GetConsoleMode(m_hin, &prev_mode); 
-    SetConsoleMode(m_hin, ENABLE_EXTENDED_FLAGS | 
-        (prev_mode & ~ENABLE_QUICK_EDIT_MODE));
+    SetConsoleMode(m_hin, ENABLE_EXTENDED_FLAGS);
+
+    // Enable windows input and mouse input after enabled extended flags.
+    SetConsoleMode(m_hin, ENABLE_WINDOW_INPUT | ENABLE_MOUSE_INPUT);
   }
 
-  std::vector<std::shared_ptr<Event>> WindowsConsole::events() const {
+  std::vector<std::shared_ptr<Event>> WindowsConsole::events() {
 	DWORD eventsCount;
 	GetNumberOfConsoleInputEvents(m_hin, &eventsCount);
 
@@ -34,30 +33,62 @@ namespace cgc {
 		switch (buffer[i].EventType) {
 		case KEY_EVENT:
 		{
+          auto& keyEvent = buffer[i].Event.KeyEvent;
           // KeyEvent
           std::shared_ptr<Event> event = std::make_shared<KeyEvent>(
-            (Keys)buffer[i].Event.KeyEvent.wVirtualKeyCode,
-            buffer[i].Event.KeyEvent.bKeyDown,
-            buffer[i].Event.KeyEvent.dwControlKeyState & CAPSLOCK_ON,
-            buffer[i].Event.KeyEvent.dwControlKeyState & NUMLOCK_ON,
-            buffer[i].Event.KeyEvent.dwControlKeyState & SCROLLLOCK_ON,
-            buffer[i].Event.KeyEvent.dwControlKeyState & LEFT_ALT_PRESSED,
-            buffer[i].Event.KeyEvent.dwControlKeyState & RIGHT_ALT_PRESSED,
-            buffer[i].Event.KeyEvent.dwControlKeyState & LEFT_CTRL_PRESSED,
-            buffer[i].Event.KeyEvent.dwControlKeyState & RIGHT_CTRL_PRESSED,
-            buffer[i].Event.KeyEvent.dwControlKeyState & SHIFT_PRESSED);
+            (Keys)keyEvent.wVirtualKeyCode,
+            keyEvent.bKeyDown,
+            keyEvent.dwControlKeyState & CAPSLOCK_ON,
+            keyEvent.dwControlKeyState & NUMLOCK_ON,
+            keyEvent.dwControlKeyState & SCROLLLOCK_ON,
+            keyEvent.dwControlKeyState & LEFT_ALT_PRESSED,
+            keyEvent.dwControlKeyState & RIGHT_ALT_PRESSED,
+            keyEvent.dwControlKeyState & LEFT_CTRL_PRESSED,
+            keyEvent.dwControlKeyState & RIGHT_CTRL_PRESSED,
+            keyEvent.dwControlKeyState & SHIFT_PRESSED);
 
           events.push_back(event);
 
           // KeyTypedEvent
-          if (buffer[i].Event.KeyEvent.bKeyDown && std::iswprint(buffer[i].Event.KeyEvent.uChar.UnicodeChar)) {
-            std::shared_ptr<Event> event = std::make_shared<KeyTypedEvent>
-              (buffer[i].Event.KeyEvent.uChar.UnicodeChar);
+          if (keyEvent.bKeyDown && std::iswprint(keyEvent.uChar.UnicodeChar)) {
+            std::shared_ptr<Event> event = std::make_shared<KeyTypedEvent>(keyEvent.uChar.UnicodeChar);
             events.push_back(event);
           }
           break;
 		}
-		case MOUSE_EVENT: // unimplemented
+		case MOUSE_EVENT:
+        {
+          auto& mouseEvent = buffer[i].Event.MouseEvent;
+          if (mouseEvent.dwEventFlags & MOUSE_MOVED) {
+            
+          }
+          else if (mouseEvent.dwEventFlags & MOUSE_WHEELED) {
+
+          }
+          else if (mouseEvent.dwEventFlags & MOUSE_HWHEELED) {
+
+          }
+          else { // Mouse pressed or released a button (including double click).
+            std::shared_ptr<Event> event;
+
+            // Finds the button state that have been changed;
+            for (size_t i = 0; i < 5; i++) {
+              uint8_t bit = 0b1 << i;
+              if ((mouseEvent.dwButtonState & bit) != (m_lastMouseEvent.dwButtonState & bit)) {
+                event = std::make_shared<MouseClickEvent>
+                  (MouseButtons(i + 1), mouseEvent.dwButtonState & bit,
+                    mouseEvent.dwEventFlags & DOUBLE_CLICK,
+                    mouseEvent.dwMousePosition.Y, mouseEvent.dwMousePosition.X);
+                break;
+              }
+            }
+
+            events.push_back(event);
+          }
+
+          m_lastMouseEvent = mouseEvent;
+          break;
+        }
 		case WINDOW_BUFFER_SIZE_EVENT: // unimplemented
 		default:
 			break;

@@ -1,12 +1,15 @@
 #pragma once
 #include "Style.h"
+#include "Core/Debug.h"
 #include <fmt/format.h>
 
 namespace cgc {
   class StyledChar {
   public:
     StyledChar(char16_t ch = ' ', Style style = Style())
-      : ch(ch), style(style) {}
+      : ch(ch), style(style) {
+      CGC_ASSERT(std::iswprint(ch), "created unprintable styled character.");
+    }
     inline void print() const {
       fmt::print(style, "{}", *this);
     }
