@@ -1,5 +1,6 @@
 #pragma once
 #include "Core/Rendering/Frame.h"
+#include "Core/Events/Event.h"
 
 namespace cgc {
   class Console {
@@ -9,6 +10,7 @@ namespace cgc {
     virtual Frame newFrame() const;
     virtual void draw(const Frame& newFrame);
 
+    virtual std::vector <std::shared_ptr<Event>> events() const = 0;
     virtual std::string getTitle() const = 0;
     virtual void setTitle(const std::string& title) = 0;
     virtual std::pair<size_t, size_t> getSize() const = 0;

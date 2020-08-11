@@ -8,6 +8,7 @@ namespace cgc {
   public:
     WindowsConsole();
 
+    virtual std::vector<std::shared_ptr<Event>> events() const override;
     virtual std::string getTitle() const override;
     virtual void setTitle(const std::string& title) override;
     virtual std::pair<size_t, size_t> getSize() const override;

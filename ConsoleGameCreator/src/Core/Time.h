@@ -12,8 +12,6 @@ namespace cgc {
     uint64_t time() const;
     uint64_t deltaTimeMS() const;
     float deltaTimeS() const;
-
-    static void sleep(uint64_t ms);
   private:
     uint64_t m_start;
     uint64_t m_lastFrame;

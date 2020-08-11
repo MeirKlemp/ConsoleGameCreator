@@ -2,6 +2,8 @@
 
 #if CGC_WINDOWS
 #include "WindowsConsole.h"
+#include "Core/Events/KeyEvent.h"
+
 #include <Windows.h>
 
 namespace cgc {
@@ -17,6 +19,44 @@ namespace cgc {
     GetConsoleMode(m_hin, &prev_mode); 
     SetConsoleMode(m_hin, ENABLE_EXTENDED_FLAGS | 
         (prev_mode & ~ENABLE_QUICK_EDIT_MODE));
+  }
+
+  std::vector<std::shared_ptr<Event>> WindowsConsole::events() const {
+	DWORD eventsCount;
+	GetNumberOfConsoleInputEvents(m_hin, &eventsCount);
+
+    std::vector<std::shared_ptr<Event>> events;
+	PINPUT_RECORD buffer = new INPUT_RECORD[eventsCount];
+	ReadConsoleInput(m_hin, buffer, eventsCount, &eventsCount);
+
+	for (unsigned int i = 0; i < eventsCount; i++) {
+		switch (buffer[i].EventType) {
+		case KEY_EVENT:
+		{
+          std::shared_ptr<Event> event = std::make_shared<KeyEvent>(
+            (Keys)buffer[i].Event.KeyEvent.wVirtualKeyCode,
+            buffer[i].Event.KeyEvent.bKeyDown,
+            buffer[i].Event.KeyEvent.dwControlKeyState & CAPSLOCK_ON,
+            buffer[i].Event.KeyEvent.dwControlKeyState & NUMLOCK_ON,
+            buffer[i].Event.KeyEvent.dwControlKeyState & SCROLLLOCK_ON,
+            buffer[i].Event.KeyEvent.dwControlKeyState & LEFT_ALT_PRESSED,
+            buffer[i].Event.KeyEvent.dwControlKeyState & RIGHT_ALT_PRESSED,
+            buffer[i].Event.KeyEvent.dwControlKeyState & LEFT_CTRL_PRESSED,
+            buffer[i].Event.KeyEvent.dwControlKeyState & RIGHT_CTRL_PRESSED,
+            buffer[i].Event.KeyEvent.dwControlKeyState & SHIFT_PRESSED);
+
+          events.push_back(event);
+          break;
+		}
+		case MOUSE_EVENT: // unimplemented
+		case WINDOW_BUFFER_SIZE_EVENT: // unimplemented
+		default:
+			break;
+		}
+	}
+
+	delete[] buffer;
+	return events;
   }
 
   std::string WindowsConsole::getTitle() const {

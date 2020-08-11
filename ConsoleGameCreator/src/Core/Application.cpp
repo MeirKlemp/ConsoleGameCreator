@@ -1,5 +1,6 @@
 #include "cgcpch.h"
 #include "Application.h"
+#include "Events/KeyEvent.h"
 
 namespace cgc {
   Application::Application() {
@@ -17,11 +18,7 @@ namespace cgc {
       time.update();
 
       Frame frame = m_console->newFrame();
-
-      Style style(Colors::red, Colors::green_yellow, Emphasis::underline);
-      frame.writef(0, 0, u"time(ms): {}", style, time.time());
-      frame.writef(1, 0, u"fps: {:.2f}", style, 1 / time.deltaTimeS());
-      frame.writef(2, 0, u"dt(ms): {}", style, time.deltaTimeMS());
+      std::vector<std::shared_ptr<Event>> events = m_console->events();
 
       m_console->draw(frame);
     }

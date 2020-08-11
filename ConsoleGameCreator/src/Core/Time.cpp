@@ -2,12 +2,13 @@
 #include "Time.h"
 #include "Debug.h"
 
+using namespace std::chrono;
+
 namespace cgc {
   Time::Time()
     : m_start(0), m_lastFrame(0), m_deltaMS(0){ }
 
   void Time::start() {
-    using namespace std::chrono;
     auto duration = system_clock::now().time_since_epoch();
     m_start = duration_cast<milliseconds>(duration).count();
   }
@@ -20,7 +21,6 @@ namespace cgc {
   uint64_t Time::time() const {
     CGC_ASSERT(m_start != 0, "Time didn't start yet.")
 
-    using namespace std::chrono;
     auto duration = system_clock::now().time_since_epoch();
     auto now = duration_cast<milliseconds>(duration).count();
     return now - m_start;
@@ -30,11 +30,5 @@ namespace cgc {
   }
   float Time::deltaTimeS() const {
     return m_deltaMS / 1000.0f;
-  }
-
-  void Time::sleep(uint64_t ms) {
-    using namespace std::this_thread;
-    using namespace std::chrono;
-    sleep_for(milliseconds(ms));
   }
 }
