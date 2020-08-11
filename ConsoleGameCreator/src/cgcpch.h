@@ -6,6 +6,7 @@
 #include <algorithm>
 #include <functional>
 #include <chrono>
+#include <cwctype>
 
 #include <string>
 #include <sstream>

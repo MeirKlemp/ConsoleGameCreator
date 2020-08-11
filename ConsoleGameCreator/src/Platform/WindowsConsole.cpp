@@ -3,6 +3,7 @@
 #if CGC_WINDOWS
 #include "WindowsConsole.h"
 #include "Core/Events/KeyEvent.h"
+#include "Core/Events/KeyTypedEvent.h"
 
 #include <Windows.h>
 
@@ -33,6 +34,7 @@ namespace cgc {
 		switch (buffer[i].EventType) {
 		case KEY_EVENT:
 		{
+          // KeyEvent
           std::shared_ptr<Event> event = std::make_shared<KeyEvent>(
             (Keys)buffer[i].Event.KeyEvent.wVirtualKeyCode,
             buffer[i].Event.KeyEvent.bKeyDown,
@@ -46,6 +48,13 @@ namespace cgc {
             buffer[i].Event.KeyEvent.dwControlKeyState & SHIFT_PRESSED);
 
           events.push_back(event);
+
+          // KeyTypedEvent
+          if (buffer[i].Event.KeyEvent.bKeyDown && std::iswprint(buffer[i].Event.KeyEvent.uChar.UnicodeChar)) {
+            std::shared_ptr<Event> event = std::make_shared<KeyTypedEvent>
+              (buffer[i].Event.KeyEvent.uChar.UnicodeChar);
+            events.push_back(event);
+          }
           break;
 		}
 		case MOUSE_EVENT: // unimplemented

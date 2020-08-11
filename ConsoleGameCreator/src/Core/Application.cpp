@@ -1,6 +1,5 @@
 #include "cgcpch.h"
 #include "Application.h"
-#include "Events/KeyEvent.h"
 
 namespace cgc {
   Application::Application() {
