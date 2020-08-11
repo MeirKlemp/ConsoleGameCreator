@@ -11,8 +11,8 @@ namespace cgc {
     virtual void draw(const Frame& newFrame);
 
     virtual std::vector <std::shared_ptr<Event>> events() const = 0;
-    virtual std::string getTitle() const = 0;
-    virtual void setTitle(const std::string& title) = 0;
+    virtual std::u16string getTitle() const = 0;
+    virtual void setTitle(const std::u16string& title) = 0;
     virtual std::pair<size_t, size_t> getSize() const = 0;
     virtual void setSize(size_t rows, size_t columns) = 0;
     virtual std::pair<size_t, size_t> getCursorPosition() const = 0;

@@ -59,13 +59,13 @@ namespace cgc {
 	return events;
   }
 
-  std::string WindowsConsole::getTitle() const {
+  std::u16string WindowsConsole::getTitle() const {
 	TCHAR ctitle[MAX_PATH];
 	GetConsoleTitle(ctitle, MAX_PATH);
 	std::wstring wtitle = ctitle;
-	return std::string(wtitle.begin(), wtitle.end());
+	return std::u16string(wtitle.begin(), wtitle.end());
   }
-  void WindowsConsole::setTitle(const std::string& title) {
+  void WindowsConsole::setTitle(const std::u16string& title) {
 	std::wstring wtitle(title.begin(), title.end());
 	SetConsoleTitle(wtitle.c_str());
   }
