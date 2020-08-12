@@ -31,7 +31,7 @@ namespace cgc {
     PINPUT_RECORD buffer = new INPUT_RECORD[eventsCount];
     ReadConsoleInput(m_hin, buffer, eventsCount, &eventsCount);
 
-    for (unsigned int i = 0; i < eventsCount; i++) {
+    for (size_t i = 0; i < eventsCount; i++) {
       switch (buffer[i].EventType) {
       case KEY_EVENT:
         keyboardEvents(buffer[i].Event.KeyEvent, events);

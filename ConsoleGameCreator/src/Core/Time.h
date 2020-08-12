@@ -1,5 +1,4 @@
 #pragma once
-#include "cgcpch.h"
 
 namespace cgc {
   class Time {

@@ -1,5 +1,4 @@
 #pragma once
-#include "cgcpch.h"
 #include "Core/Rendering/StyledChar.h"
 #include "Core/Debug.h"
 

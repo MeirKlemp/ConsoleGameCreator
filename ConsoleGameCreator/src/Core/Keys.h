@@ -1,5 +1,4 @@
 #pragma once
-#include "cgcpch.h"
 
 namespace cgc {
   enum class Keys : uint16_t {
