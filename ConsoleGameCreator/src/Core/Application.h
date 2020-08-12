@@ -11,6 +11,7 @@ namespace cgc {
     void close();
 
     Console& console();
+    const Time& time() const;
 
     static Application* get();
   private:
@@ -18,7 +19,7 @@ namespace cgc {
   private:
     bool running = false;
     std::unique_ptr<Console> m_console;
-    Time time;
+    Time m_time;
 
     static Application* s_instance;
   };

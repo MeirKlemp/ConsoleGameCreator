@@ -20,6 +20,10 @@ namespace cgc {
     virtual void setCursorVisible(bool visible) override;
 
   private:
+    void keyboardEvents(const KEY_EVENT_RECORD& keyEvent, std::vector<std::shared_ptr<Event>>& events);
+    void mouseEvents(const MOUSE_EVENT_RECORD& mouseEvent, std::vector<std::shared_ptr<Event>>& events);
+
+  private:
     HANDLE m_hout, m_hin;
     MOUSE_EVENT_RECORD m_lastMouseEvent;
   };

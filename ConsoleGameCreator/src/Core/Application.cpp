@@ -2,6 +2,7 @@
 #include "Application.h"
 #include "Events/MouseClickedEvent.h"
 #include "Events/MouseMovedEvent.h"
+#include "Events/MouseScrolledEvent.h"
 #include "Events/KeyPressedEvent.h"
 #include "Events/KeyTypedEvent.h"
 
@@ -15,10 +16,10 @@ namespace cgc {
 
   void Application::run() {
     running = true;
-    time.start();
+    m_time.start();
 
     while (running) {
-      time.update();
+      m_time.update();
 
       Frame frame = m_console->newFrame();
       std::vector<std::shared_ptr<Event>> events = m_console->events();
@@ -34,6 +35,11 @@ namespace cgc {
         Event::dispatch<MouseMovedEvent>(event, [](MouseMovedEvent& e)->bool {
           Console& console = Application::get()->console();
           console.setTitle(fmt::format(u"Mouse Moved: row({0}), col({1})", e.row(), e.column()));
+          return true;
+        });
+        Event::dispatch<MouseScrolledEvent>(event, [](MouseScrolledEvent& e)->bool {
+          Console& console = Application::get()->console();
+          console.setTitle(fmt::format(u"Mouse Scrolled: vertical({}), horizontal({})", e.vertical(), e.horizontal()));
           return true;
         });
         Event::dispatch<KeyPressedEvent>(event, [](KeyPressedEvent& e)->bool {
@@ -62,6 +68,10 @@ namespace cgc {
 
   Console& Application::console() {
     return *m_console;
+  }
+
+  const Time& Application::time() const {
+    return m_time;
   }
 
   Application* Application::s_instance = new Application();
