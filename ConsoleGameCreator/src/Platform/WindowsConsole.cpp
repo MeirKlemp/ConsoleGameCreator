@@ -2,9 +2,10 @@
 
 #if CGC_WINDOWS
 #include "WindowsConsole.h"
-#include "Core/Events/KeyEvent.h"
+#include "Core/Events/KeyPressedEvent.h"
 #include "Core/Events/KeyTypedEvent.h"
-#include "Core/Events/MouseClickEvent.h"
+#include "Core/Events/MouseClickedEvent.h"
+#include "Core/Events/MouseMovedEvent.h"
 
 namespace cgc {
   WindowsConsole::WindowsConsole() {
@@ -34,8 +35,8 @@ namespace cgc {
 		case KEY_EVENT:
 		{
           auto& keyEvent = buffer[i].Event.KeyEvent;
-          // KeyEvent
-          std::shared_ptr<Event> event = std::make_shared<KeyEvent>(
+          // KeyPressedEvent
+          std::shared_ptr<Event> event = std::make_shared<KeyPressedEvent>(
             (Keys)keyEvent.wVirtualKeyCode,
             keyEvent.bKeyDown,
             keyEvent.dwControlKeyState & CAPSLOCK_ON,
@@ -59,8 +60,10 @@ namespace cgc {
 		case MOUSE_EVENT:
         {
           auto& mouseEvent = buffer[i].Event.MouseEvent;
+
           if (mouseEvent.dwEventFlags & MOUSE_MOVED) {
-            
+            events.push_back(std::make_shared<MouseMovedEvent>
+              (mouseEvent.dwMousePosition.Y, mouseEvent.dwMousePosition.X));
           }
           else if (mouseEvent.dwEventFlags & MOUSE_WHEELED) {
 
@@ -75,7 +78,7 @@ namespace cgc {
             for (size_t i = 0; i < 5; i++) {
               uint8_t bit = 0b1 << i;
               if ((mouseEvent.dwButtonState & bit) != (m_lastMouseEvent.dwButtonState & bit)) {
-                event = std::make_shared<MouseClickEvent>
+                event = std::make_shared<MouseClickedEvent>
                   (MouseButtons(i + 1), mouseEvent.dwButtonState & bit,
                     mouseEvent.dwEventFlags & DOUBLE_CLICK,
                     mouseEvent.dwMousePosition.Y, mouseEvent.dwMousePosition.X);
@@ -83,7 +86,9 @@ namespace cgc {
               }
             }
 
-            events.push_back(event);
+            if (event) {
+              events.push_back(event);
+            }
           }
 
           m_lastMouseEvent = mouseEvent;
