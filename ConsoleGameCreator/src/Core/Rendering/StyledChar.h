@@ -8,7 +8,7 @@ namespace cgc {
   public:
     StyledChar(char16_t ch = ' ', Style style = Style())
       : ch(ch), style(style) {
-      CGC_ASSERT(std::iswprint(ch), "created unprintable styled character.");
+      CGC_ASSERT(iswprint(ch), "created unprintable styled character.");
     }
     inline void print() const {
       fmt::print(style, "{}", *this);
