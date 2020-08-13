@@ -10,6 +10,11 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 
 includedir = {}
 includedir["fmt"] = "ConsoleGameCreator/vendor/fmt/include"
+includedir["unilib"] = "ConsoleGameCreator/vendor/unilib/unilib"
+
+group "Dependencies"
+  include "ConsoleGameCreator/vendor/unilib"
+group ""
 
 project "ConsoleGameCreator"
   location "ConsoleGameCreator"
@@ -20,8 +25,8 @@ project "ConsoleGameCreator"
   targetdir ("bin/" .. outputdir .. "/%{prj.name}")
   objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
 
-   pchheader "cgcpch.h"
-   pchsource "ConsoleGameCreator/src/cgcpch.cpp"
+  pchheader "cgcpch.h"
+  pchsource "ConsoleGameCreator/src/cgcpch.cpp"
 
   files {
     "%{prj.name}/src/**.h",
@@ -35,10 +40,13 @@ project "ConsoleGameCreator"
 
   includedirs {
     "%{prj.name}/src",
-    includedir["fmt"]
+    includedir["fmt"],
+    includedir["unilib"]
   }
 
-  links {}
+  links {
+    "unilib"
+  }
 
   filter "system:windows"
     systemversion "latest"

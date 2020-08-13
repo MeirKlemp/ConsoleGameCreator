@@ -1,3 +1,7 @@
 [submodule "ConsoleGameCreator\\vendor\\fmt"]
 	path = ConsoleGameCreator\\vendor\\fmt
 	url = https://github.com/fmtlib/fmt.git
+[submodule "ConsoleGameCreator/vendor/unilib"]
+	path = ConsoleGameCreator/vendor/unilib
+	url = https://github.com/MeirKlemp/unilib.git
+	branch = stable
