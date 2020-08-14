@@ -7,6 +7,7 @@
 #include "Core/Events/MouseClickedEvent.h"
 #include "Core/Events/MouseMovedEvent.h"
 #include "Core/Events/MouseScrolledEvent.h"
+#include "Core/Util/Encoding.h"
 
 namespace cgc {
   WindowsConsole::WindowsConsole() {
@@ -49,14 +50,15 @@ namespace cgc {
     return events;
   }
 
-  std::u16string WindowsConsole::getTitle() const {
+  std::string WindowsConsole::getTitle() const {
     TCHAR ctitle[MAX_PATH];
     GetConsoleTitle(ctitle, MAX_PATH);
     std::wstring wtitle = ctitle;
-    return std::u16string(wtitle.begin(), wtitle.end());
+    return Encoding::u16ToU8(std::u16string(wtitle.begin(), wtitle.end()));
   }
-  void WindowsConsole::setTitle(const std::u16string& title) {
-    std::wstring wtitle(title.begin(), title.end());
+  void WindowsConsole::setTitle(const std::string& title) {
+    std::u16string temp = Encoding::u8ToU16(title);
+    std::wstring wtitle(temp.begin(), temp.end());
     SetConsoleTitle(wtitle.c_str());
   }
 
@@ -119,9 +121,16 @@ namespace cgc {
     events.push_back(event);
 
     // KeyTypedEvent
-    if (keyEvent.bKeyDown && std::iswprint(keyEvent.uChar.UnicodeChar)) {
-      std::shared_ptr<Event> event = std::make_shared<KeyTypedEvent>(keyEvent.uChar.UnicodeChar);
-      events.push_back(event);
+    if (keyEvent.bKeyDown) {
+      // If the typed key is ascii char.
+      if (std::isprint((uint8_t)keyEvent.uChar.AsciiChar)) {
+        events.push_back(std::make_shared<KeyTypedEvent>(keyEvent.uChar.AsciiChar));
+      }
+      // If the typed key is unicode.
+      else if (std::iswprint(keyEvent.uChar.UnicodeChar)) {
+        std::string utf8 = Encoding::u16ToU8(keyEvent.uChar.UnicodeChar);
+        events.push_back(std::make_shared<KeyTypedEvent>(utf8));
+      }
     }
   }
   void WindowsConsole::mouseEvents(const MOUSE_EVENT_RECORD& mouseEvent, std::vector<std::shared_ptr<Event>>& events) {

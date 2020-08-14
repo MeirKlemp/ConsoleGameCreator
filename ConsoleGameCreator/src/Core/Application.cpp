@@ -21,7 +21,7 @@ namespace cgc {
       std::vector<std::shared_ptr<Event>> events = m_console->events();
       Input::onEvents(events);
 
-      m_console->setTitle(fmt::format(u"mouse left: click({}), down({}), up({}), double({}), row({}), col({})",
+      m_console->setTitle(fmt::format("mouse left: click({}), down({}), up({}), double({}), row({}), col({})",
         Input::mouseButtonClicked(MouseButtons::left_button), Input::mouseButtonDown(MouseButtons::left_button),
         Input::mouseButtonUp(MouseButtons::left_button), Input::mouseButtonDoubleClick(MouseButtons::left_button),
         Input::mouseRow(), Input::mouseColumn()));

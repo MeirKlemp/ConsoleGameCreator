@@ -4,6 +4,7 @@ namespace cgc::Encoding {
   namespace utf8 {
     std::string encode(char32_t unicode);
     std::string encode(const std::u32string& unicode);
+    char32_t decodeChar(char ascii);
     char32_t decodeChar(const std::string& utf8);
     std::u32string decode(const std::string& utf8);
     char32_t firstUnicode(const std::string& utf8);
@@ -14,6 +15,7 @@ namespace cgc::Encoding {
   namespace utf16 {
     std::u16string encode(char32_t unicode);
     std::u16string encode(const std::u32string& unicode);
+    char32_t decodeChar(char16_t utf16);
     char32_t decodeChar(const std::u16string& utf16);
     std::u32string decode(const std::u16string& utf16);
     char32_t firstUnicode(const std::u16string& utf16);
@@ -22,5 +24,7 @@ namespace cgc::Encoding {
   }
 
   std::string u16ToU8(const std::u16string& utf16);
+  std::string u16ToU8(char16_t utf16);
   std::u16string u8ToU16(const std::string& utf8);
+  std::u16string u8ToU16(char utf8);
 }

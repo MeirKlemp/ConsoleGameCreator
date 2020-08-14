@@ -14,7 +14,8 @@ namespace cgc {
     static bool keyPressed(Keys key);
     static bool keyDown(Keys key);
     static bool keyUp(Keys key);
-    static bool keyTyped(char16_t keyChar);
+    static bool keyTyped(char keyChar);
+    static bool keyTyped(const std::string& keyCharUtf8);
     static bool mouseButtonClicked(MouseButtons button);
     static bool mouseButtonDown(MouseButtons button);
     static bool mouseButtonUp(MouseButtons button);
@@ -34,11 +35,13 @@ namespace cgc {
 
   private:
     static std::queue<Keys> s_keysReleased;
-    static std::queue<char16_t> s_notTyped;
+    static std::queue<std::string> s_notTypedUtf8;
+    static std::queue<char> s_notTyped;
     static std::queue<MouseButtons> s_mouseReleased;
 
     static std::unordered_map<Keys, int8_t> s_keysMap;
-    static std::unordered_map<char16_t, bool> s_typedMap;
+    static std::unordered_map<std::string, bool> s_typedMapUtf8;
+    static std::unordered_map<char, bool> s_typedMap;
     static std::unordered_map<MouseButtons, int8_t> s_mouseClickedMap;
     static std::unordered_map<MouseButtons, bool> s_mouseDoubleClickedMap;
 

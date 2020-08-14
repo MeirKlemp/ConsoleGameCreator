@@ -15,9 +15,13 @@ namespace cgc {
       key = s_keysReleased.front();
       s_keysMap[key] = NOT_PRESSED;
     }
-    for (char16_t keyChar; !s_notTyped.empty(); s_notTyped.pop()) {
+    for (char keyChar; !s_notTyped.empty(); s_notTyped.pop()) {
       keyChar = s_notTyped.front();
       s_typedMap[keyChar] = false;
+    }
+    for (std::string utf8; !s_notTypedUtf8.empty(); s_notTypedUtf8.pop()) {
+      utf8 = s_notTypedUtf8.front();
+      s_typedMapUtf8[utf8] = false;
     }
     for (MouseButtons button; !s_mouseReleased.empty(); s_mouseReleased.pop()) {
       button = s_mouseReleased.front();
@@ -43,8 +47,11 @@ namespace cgc {
     return s_keysMap[key] == UP;
   }
 
-  bool Input::keyTyped(char16_t keyChar) {
+  bool Input::keyTyped(char keyChar) {
     return s_typedMap[keyChar];
+  }
+  bool Input::keyTyped(const std::string& keyCharUtf8) {
+    return s_typedMapUtf8[keyCharUtf8] || s_typedMap[keyCharUtf8[0]];
   }
 
   bool Input::mouseButtonClicked(MouseButtons button) {
@@ -88,8 +95,14 @@ namespace cgc {
     return false;
   }
   bool Input::onKeyTyped(KeyTypedEvent& e) {
-    s_typedMap[e.keyChar()] = true;
-    s_notTyped.push(e.keyChar());
+    if (e.isAscii()) {
+      s_typedMap[e.keyChar()] = true;
+      s_notTyped.push(e.keyChar());
+    }
+    else {
+      s_typedMapUtf8[e.keyCharUtf8()] = true;
+      s_notTypedUtf8.push(e.keyCharUtf8());
+    }
     return false;
   }
   bool Input::onMouseClicked(MouseClickedEvent& e) {
@@ -121,11 +134,13 @@ namespace cgc {
   }
 
   std::queue<Keys> Input::s_keysReleased;
-  std::queue<char16_t> Input::s_notTyped;
+  std::queue<std::string> Input::s_notTypedUtf8;
+  std::queue<char> Input::s_notTyped;
   std::queue<MouseButtons> Input::s_mouseReleased;
 
   std::unordered_map<Keys, int8_t> Input::s_keysMap;
-  std::unordered_map<char16_t, bool> Input::s_typedMap;
+  std::unordered_map<std::string, bool> Input::s_typedMapUtf8;
+  std::unordered_map<char, bool> Input::s_typedMap;
   std::unordered_map<MouseButtons, int8_t> Input::s_mouseClickedMap;
   std::unordered_map<MouseButtons, bool> Input::s_mouseDoubleClickedMap;
 

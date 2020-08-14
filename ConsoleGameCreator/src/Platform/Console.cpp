@@ -24,7 +24,7 @@ namespace cgc {
     }
   }
 
-  void Console::drawChar(size_t row, size_t column, StyledChar schar) {
+  void Console::drawChar(size_t row, size_t column, const StyledChar& schar) {
     setCursorPosition(row, column);
     schar.print();
   }
