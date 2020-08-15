@@ -15,18 +15,20 @@ namespace cgc {
       key = s_keysReleased.front();
       s_keysMap[key] = NOT_PRESSED;
     }
-    for (char keyChar; !s_notTyped.empty(); s_notTyped.pop()) {
-      keyChar = s_notTyped.front();
-      s_typedMap[keyChar] = false;
-    }
-    for (std::string utf8; !s_notTypedUtf8.empty(); s_notTypedUtf8.pop()) {
-      utf8 = s_notTypedUtf8.front();
-      s_typedMapUtf8[utf8] = false;
-    }
     for (MouseButtons button; !s_mouseReleased.empty(); s_mouseReleased.pop()) {
       button = s_mouseReleased.front();
       s_mouseClickedMap[button] = NOT_CLICKED;
     }
+    for (char keyChar; !s_notTyped.empty(); s_notTyped.pop()) {
+      keyChar = s_notTyped.front();
+      s_typedMap[keyChar] = false;
+    }
+#ifdef CGC_SUPPORT_UTF8
+    for (std::string utf8; !s_notTypedUtf8.empty(); s_notTypedUtf8.pop()) {
+      utf8 = s_notTypedUtf8.front();
+      s_typedMapUtf8[utf8] = false;
+    }
+#endif
 
     for (auto pevent : events) {
       Event::dispatch<KeyPressedEvent>(*pevent, onKeyPressed);
@@ -50,9 +52,11 @@ namespace cgc {
   bool Input::keyTyped(char keyChar) {
     return s_typedMap[keyChar];
   }
+#if CGC_SUPPORT_UTF8
   bool Input::keyTyped(const std::string& keyCharUtf8) {
     return s_typedMapUtf8[keyCharUtf8] || s_typedMap[keyCharUtf8[0]];
   }
+#endif
 
   bool Input::mouseButtonClicked(MouseButtons button) {
     return s_mouseClickedMap[button];
@@ -95,6 +99,7 @@ namespace cgc {
     return false;
   }
   bool Input::onKeyTyped(KeyTypedEvent& e) {
+#ifdef CGC_SUPPORT_UTF8
     if (e.isAscii()) {
       s_typedMap[e.keyChar()] = true;
       s_notTyped.push(e.keyChar());
@@ -103,6 +108,10 @@ namespace cgc {
       s_typedMapUtf8[e.keyCharUtf8()] = true;
       s_notTypedUtf8.push(e.keyCharUtf8());
     }
+#else
+    s_typedMap[e.keyChar()] = true;
+    s_notTyped.push(e.keyChar());
+#endif
     return false;
   }
   bool Input::onMouseClicked(MouseClickedEvent& e) {
@@ -134,18 +143,21 @@ namespace cgc {
   }
 
   std::queue<Keys> Input::s_keysReleased;
-  std::queue<std::string> Input::s_notTypedUtf8;
-  std::queue<char> Input::s_notTyped;
   std::queue<MouseButtons> Input::s_mouseReleased;
+  std::queue<char> Input::s_notTyped;
 
   std::unordered_map<Keys, int8_t> Input::s_keysMap;
-  std::unordered_map<std::string, bool> Input::s_typedMapUtf8;
-  std::unordered_map<char, bool> Input::s_typedMap;
   std::unordered_map<MouseButtons, int8_t> Input::s_mouseClickedMap;
   std::unordered_map<MouseButtons, bool> Input::s_mouseDoubleClickedMap;
+  std::unordered_map<char, bool> Input::s_typedMap;
 
   size_t Input::s_row = 0;
   size_t Input::s_column = 0;
   int Input::s_vertical = 0;
   int Input::s_horizontal = 0;
+
+#ifdef CGC_SUPPORT_UTF8
+  std::queue<std::string> Input::s_notTypedUtf8;
+  std::unordered_map<std::string, bool> Input::s_typedMapUtf8;
+#endif
 }

@@ -1,4 +1,5 @@
 #pragma once
+#ifdef CGC_SUPPORT_UTF8
 #include "cgcpch.h"
 #include "Encoding.h"
 
@@ -33,3 +34,10 @@ namespace cgc {
     std::u32string m_data;
   };
 }
+
+#define CGC_STRING cgc::utf8string
+#define CGC_CHAR std::string
+#else
+#define CGC_STRING const std::string&
+#define CGC_CHAR char
+#endif

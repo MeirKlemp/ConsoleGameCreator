@@ -1,7 +1,7 @@
 #include "cgcpch.h"
 #include "Frame.h"
 #include "Core/Util/Encoding.h"
-#include "Core/Util/utf8string.h"
+#include "Core/Util/Types.h"
 
 
 namespace cgc {
@@ -85,16 +85,16 @@ namespace cgc {
     CGC_ASSERT(row < m_rows, "row is out of bounds.");
     CGC_ASSERT(column < m_columns, "column is out of bounds.");
 
-    utf8string utf8 = str;
+    CGC_STRING cgcstr = str;
     size_t maxColLen = m_columns - column;
-    std::string towrite = utf8.substr(0, maxColLen);
+    std::string towrite = cgcstr.substr(0, maxColLen);
     size_t written = strToBuffer(row, column, towrite, style);
 
     if (wrapping) {
       for (size_t i = maxColLen, r = row + 1;
         i < str.length() && r < m_rows;
         i += m_columns, r++) {
-        towrite = utf8.substr(i, m_columns);
+        towrite = cgcstr.substr(i, m_columns);
         written += strToBuffer(r, 0, towrite, style);
       }
     }
@@ -128,16 +128,16 @@ namespace cgc {
   }
 
   size_t Frame::strToBuffer(size_t row, size_t column, const std::string& str, Style style) {
-    utf8string utf8 = str;
+    CGC_STRING cgcstr = str;
 
     CGC_ASSERT(row < m_rows, "row is out of bounds.");
     CGC_ASSERT(column < m_columns, "column is out of bounds.");
-    CGC_ASSERT(utf8.length() <= m_columns - column, "str is out of bounds.");
+    CGC_ASSERT(cgcstr.length() <= m_columns - column, "str is out of bounds.");
 
-    size_t length = std::min(m_columns - column, utf8.length());
+    size_t length = std::min(m_columns - column, cgcstr.length());
 
     for (size_t i = 0; i < length; i++) {
-      m_buffer[row][column + i] = StyledChar(utf8[i], style);
+      m_buffer[row][column + i] = StyledChar(cgcstr[i], style);
     }
 
     return length;

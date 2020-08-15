@@ -126,11 +126,13 @@ namespace cgc {
       if (std::isprint((uint8_t)keyEvent.uChar.AsciiChar)) {
         events.push_back(std::make_shared<KeyTypedEvent>(keyEvent.uChar.AsciiChar));
       }
+#ifdef CGC_SUPPORT_UTF8
       // If the typed key is unicode.
       else if (std::iswprint(keyEvent.uChar.UnicodeChar)) {
         std::string utf8 = Encoding::u16ToU8(keyEvent.uChar.UnicodeChar);
         events.push_back(std::make_shared<KeyTypedEvent>(utf8));
       }
+#endif
     }
   }
   void WindowsConsole::mouseEvents(const MOUSE_EVENT_RECORD& mouseEvent, std::vector<std::shared_ptr<Event>>& events) {

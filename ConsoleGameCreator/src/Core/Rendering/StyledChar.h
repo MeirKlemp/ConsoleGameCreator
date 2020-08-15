@@ -1,36 +1,44 @@
 #pragma once
 #include "Style.h"
 #include "Core/Debug.h"
-#include "Core/Util/Encoding.h"
+#include "Core/Util/Types.h"
 #include <fmt/format.h>
 
 namespace cgc {
   class StyledChar {
   public:
+#ifdef CGC_SUPPORT_UTF8
     StyledChar(const std::string& utf8Char = " ", Style style = Style())
-      : utf8(utf8Char), style(style) {
-      CGC_ASSERT(iswprint(Encoding::utf8::firstUnicode(utf8)), "Created unprintable styled character.");
+      : m_char(utf8Char), m_style(style) {
+      CGC_ASSERT(iswprint(Encoding::utf8::firstUnicode(utf8Char)), "Created unprintable styled character.");
     }
     StyledChar(char ascii, Style style = Style())
-      : style(style) {
-      CGC_ASSERT(isprint(ascii), "Created unprintable styled character.");
-      utf8 += ascii;
+      : m_style(style) {
+      CGC_ASSERT(isprint((uint8_t)ascii), "Created unprintable styled character.");
+      m_char += ascii;
     }
+#else
+    StyledChar(char ascii = ' ', Style style = Style())
+      : m_style(style), m_char(ascii) {
+      CGC_ASSERT(isprint((uint8_t)ascii), "Created unprintable styled character.");
+    }
+#endif
     inline void print() const {
-      fmt::print(style, "{}", *this);
+      fmt::print(m_style, "{}", *this);
     }
     bool operator==(const StyledChar& rhs) const {
-      return utf8 == rhs.utf8 && style == rhs.style;
+      return m_char == rhs.m_char && m_style == rhs.m_style;
     }
     bool operator!=(const StyledChar& rhs) const {
       return !operator==(rhs);
     }
   public:
-    std::string utf8;
-    Style style;
+    CGC_CHAR m_char;
+    Style m_style;
   };
 }
 
+// Making StyledChar formattable in fmt library.
 template <>
 struct fmt::formatter<cgc::StyledChar> {
   constexpr auto parse(format_parse_context& ctx) {
@@ -45,6 +53,6 @@ struct fmt::formatter<cgc::StyledChar> {
   }
   template <typename FormatContext>
   auto format(const cgc::StyledChar& sch, FormatContext& ctx) {
-    return format_to(ctx.out(), "{}", sch.utf8);
+    return format_to(ctx.out(), "{}", sch.m_char);
   }
 };

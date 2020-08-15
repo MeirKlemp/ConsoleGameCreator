@@ -1,5 +1,7 @@
 #include "cgcpch.h"
-#include "utf8string.h"
+
+#ifdef CGC_SUPPORT_UTF8
+#include "Types.h"
 #include "Encoding.h"
 #include "Core/Debug.h"
 
@@ -37,3 +39,4 @@ namespace cgc {
     return *this;
   }
 }
+#endif
