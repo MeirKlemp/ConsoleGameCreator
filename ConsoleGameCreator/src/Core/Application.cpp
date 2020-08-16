@@ -1,6 +1,7 @@
 #include "cgcpch.h"
 #include "Application.h"
 #include "Input.h"
+#include "Events/WindowResizedEvent.h"
 
 namespace cgc {
   Application::Application() {
@@ -25,6 +26,13 @@ namespace cgc {
         Input::mouseButtonClicked(MouseButtons::left_button), Input::mouseButtonDown(MouseButtons::left_button),
         Input::mouseButtonUp(MouseButtons::left_button), Input::mouseButtonDoubleClick(MouseButtons::left_button),
         Input::mouseRow(), Input::mouseColumn()));
+
+      for (auto pevent : events) {
+        Event::dispatch<WindowResizedEvent>(*pevent, [this](WindowResizedEvent& event) {
+          m_console->setCursorVisible(false);
+          return false;
+        });
+      }
 
       m_console->draw(frame);
     }

@@ -7,6 +7,7 @@
 #include "Core/Events/MouseClickedEvent.h"
 #include "Core/Events/MouseMovedEvent.h"
 #include "Core/Events/MouseScrolledEvent.h"
+#include "Core/Events/WindowResizedEvent.h"
 #include "Core/Util/Encoding.h"
 
 namespace cgc {
@@ -40,11 +41,12 @@ namespace cgc {
       case MOUSE_EVENT:
         mouseEvents(buffer[i].Event.MouseEvent, events);
         break;
-      case WINDOW_BUFFER_SIZE_EVENT: // unimplemented
       default:
         break;
       }
     }
+
+    windowResizedEvent(events);
 
     delete[] buffer;
     return events;
@@ -67,8 +69,8 @@ namespace cgc {
     GetConsoleScreenBufferInfo(m_hout, &info);
 
     auto [left, top, right, bottom] = info.srWindow;
-    size_t rows = (size_t)bottom - top;
-    size_t columns = (size_t)right - left;
+    size_t rows = std::max(bottom - top, 0);
+    size_t columns = std::max(right - left, 0);
 
     return std::make_pair(rows, columns);
   }
@@ -102,6 +104,12 @@ namespace cgc {
     if (cursorInfo.bVisible == visible) return;
     cursorInfo.bVisible = visible;
     SetConsoleCursorInfo(m_hout, &cursorInfo);
+  }
+
+  bool WindowsConsole::isCursorVisible() {
+    CONSOLE_CURSOR_INFO cursorInfo;
+    GetConsoleCursorInfo(m_hout, &cursorInfo);
+    return cursorInfo.bVisible;
   }
 
   void WindowsConsole::keyboardEvents(const KEY_EVENT_RECORD& keyEvent, std::vector<std::shared_ptr<Event>>& events) {
@@ -169,6 +177,15 @@ namespace cgc {
     }
 
     m_lastMouseEvent = mouseEvent;
+  }
+  void WindowsConsole::windowResizedEvent(std::vector<std::shared_ptr<Event>>& events) {
+    auto [rows, columns] = getSize();
+    if (rows != m_lastRows || columns != m_lastColumns) {
+      events.push_back(std::make_shared<WindowResizedEvent>(rows, columns, m_lastRows, m_lastColumns));
+
+      m_lastRows = rows;
+      m_lastColumns = columns;
+    }
   }
 }
 #endif

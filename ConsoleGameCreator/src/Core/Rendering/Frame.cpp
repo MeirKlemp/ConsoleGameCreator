@@ -5,8 +5,8 @@
 
 
 namespace cgc {
-  Frame::Frame(size_t _rows, size_t _columns, const StyledChar& defaultChar)
-    : m_rows(_rows), m_columns(_columns) {
+  Frame::Frame(size_t rows, size_t columns, const StyledChar& defaultChar)
+    : m_rows(rows), m_columns(columns) {
     setBuffer(defaultChar);
   }
 
@@ -180,7 +180,7 @@ namespace cgc {
   void Frame::deleteBuffer() {
     if (!m_buffer) return;
 
-    for (size_t r = 0; r < rows(); r++) {
+    for (size_t r = 0; r < m_rows; r++) {
       delete[] m_buffer[r];
     }
     delete[] m_buffer;

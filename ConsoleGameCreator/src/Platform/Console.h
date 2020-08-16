@@ -18,6 +18,7 @@ namespace cgc {
     virtual std::pair<size_t, size_t> getCursorPosition() const = 0;
     virtual void setCursorPosition(size_t row, size_t column) = 0;
     virtual void setCursorVisible(bool visible) = 0;
+    virtual bool isCursorVisible() = 0;
 
     static std::unique_ptr<Console> platformConsole();
   private:
