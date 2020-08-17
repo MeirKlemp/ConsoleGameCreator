@@ -8,6 +8,8 @@ namespace cgc {
 
     template<class Event_t>
     static void dispatch(Event& event, std::function<bool(Event_t&)> callback) {
+      if (!callback) return;
+
       Event_t* e = dynamic_cast<Event_t*>(&event);
       if (e) {
         e->m_handled = callback(*e);

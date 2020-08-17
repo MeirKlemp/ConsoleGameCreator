@@ -1,7 +1,6 @@
 #include "cgcpch.h"
 #include "Application.h"
 #include "Input.h"
-#include "Events/WindowResizedEvent.h"
 
 namespace cgc {
   Application::Application() {
@@ -14,28 +13,23 @@ namespace cgc {
   void Application::run() {
     running = true;
     m_time.start();
+    m_gameobject.start();
 
     while (running) {
       m_time.update();
 
       Frame frame = m_console->newFrame();
       std::vector<std::shared_ptr<Event>> events = m_console->events();
+
       Input::onEvents(events);
 
-      m_console->setTitle(fmt::format("mouse left: click({}), down({}), up({}), double({}), row({}), col({})",
-        Input::mouseButtonClicked(MouseButtons::left_button), Input::mouseButtonDown(MouseButtons::left_button),
-        Input::mouseButtonUp(MouseButtons::left_button), Input::mouseButtonDoubleClick(MouseButtons::left_button),
-        Input::mouseRow(), Input::mouseColumn()));
-
-      for (auto pevent : events) {
-        Event::dispatch<WindowResizedEvent>(*pevent, [this](WindowResizedEvent& event) {
-          m_console->setCursorVisible(false);
-          return false;
-        });
-      }
+      m_gameobject.onEvents(events);
+      m_gameobject.update(frame);
 
       m_console->draw(frame);
     }
+
+    m_gameobject.end();
   }
   void Application::close() {
     running = false;

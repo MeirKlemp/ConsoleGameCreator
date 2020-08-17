@@ -1,4 +1,5 @@
 #pragma once
+#include "cgcpch.h"
 #include "Core/Events/KeyPressedEvent.h"
 #include "Core/Events/KeyTypedEvent.h"
 #include "Core/Events/MouseClickedEvent.h"
