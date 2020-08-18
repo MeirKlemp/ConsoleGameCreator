@@ -41,3 +41,12 @@ namespace cgc {
 #define CGC_STRING const std::string&
 #define CGC_CHAR char
 #endif
+
+#define CGC_FUNCTION_CHECK(func, return_t)                                              \
+template<class T, class... Param>                                                       \
+using func_##func##_t = decltype(std::declval<T&>().func(std::declval<Param>()...));    \
+template<class, class = void, class...>                                                 \
+struct has_##func : std::false_type {};                                                 \
+template<class T, class... Param>                                                       \
+struct has_##func <T, std::void_t<func_##func##_t<T, Param...>>, Param...>              \
+  : std::is_same<func_##func##_t<T, Param...>, return_t> {};

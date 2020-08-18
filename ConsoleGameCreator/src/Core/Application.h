@@ -15,7 +15,10 @@ namespace cgc {
     const Time& time() const;
 
     template<class T, class... Args>
-    inline void setGameObject(Args&... args) { m_gameobject.bind<T>(args...); }
+    inline void setGameObject(Args&... args) {
+      m_gameobject.bind<T>(args...);
+      if (running) m_gameobject.start();
+    }
 
     static Application* get();
   private:
