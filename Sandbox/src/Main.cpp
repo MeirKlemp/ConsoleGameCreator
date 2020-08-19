@@ -13,6 +13,7 @@ public:
     border.setBorder(cgc::StyledChar('#', cgc::Style(cgc::Colors::red, cgc::Colors::green)));
     addGameObject(border);
   }
+
   void update(cgc::Frame& frame) {
     frame.write(row, column, print, style);
 
@@ -35,6 +36,7 @@ public:
   bool windowResized(cgc::WindowResizedEvent & e) {
     border.setSize(e.rows(), e.columns());
     console().setCursorVisible(false);
+    console().clear();
     return false;
   }
 private:

@@ -22,9 +22,9 @@ namespace cgc {
     virtual bool isCursorVisible() = 0;
 
     static std::unique_ptr<Console> platformConsole();
-  private:
+  protected:
     virtual void drawChar(size_t row, size_t column, const StyledChar& schar);
-  private:
+  protected:
     Frame m_frame;
   };
 }

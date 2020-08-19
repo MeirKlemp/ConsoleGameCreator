@@ -42,6 +42,11 @@ namespace cgc {
 #define CGC_CHAR char
 #endif
 
+// Used for check if a function exists.
+// func: the function name.
+// return_t: the return type of the function.
+// usage: has_func<T> <- for a function without parameters.
+//        has_func<T, void, Arguments...> for a function with arguments.
 #define CGC_FUNCTION_CHECK(func, return_t)                                              \
 template<class T, class... Param>                                                       \
 using func_##func##_t = decltype(std::declval<T&>().func(std::declval<Param>()...));    \

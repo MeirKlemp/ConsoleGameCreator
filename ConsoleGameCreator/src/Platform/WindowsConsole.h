@@ -10,6 +10,7 @@ namespace cgc {
   public:
     WindowsConsole();
 
+    virtual void clear() override; // A better way to clear the console in windows.
     virtual std::vector<std::shared_ptr<Event>> events() override;
     virtual std::string getTitle() const override;
     virtual void setTitle(const std::string& title) override;

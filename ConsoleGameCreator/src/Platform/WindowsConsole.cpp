@@ -25,6 +25,27 @@ namespace cgc {
     SetConsoleMode(m_hin, ENABLE_WINDOW_INPUT | ENABLE_MOUSE_INPUT);
   }
 
+  void WindowsConsole::clear() {
+    // Clear screen
+    auto [rows, columns] = getSize();
+    size_t size = rows * columns;
+    PCHAR_INFO buffer = new CHAR_INFO[size];
+    for (size_t i = 0; i < size; i++) {
+      buffer[i].Char.AsciiChar = ' ';
+      buffer[i].Attributes = 0;
+    }
+    SMALL_RECT rect = { 0, 0, (SHORT)columns, (SHORT)rows };
+    WriteConsoleOutput(m_hout, buffer, { (SHORT)columns, (SHORT)rows }, { 0, 0 }, &rect);
+    delete[] buffer;
+
+    // Update frame
+    for (size_t r = 0; r < m_frame.rows(); r++) {
+      for (size_t c = 0; c < m_frame.columns(); c++) {
+        m_frame.set(r, c, ' ');
+      }
+    }
+  }
+
   std::vector<std::shared_ptr<Event>> WindowsConsole::events() {
     DWORD eventsCount;
     GetNumberOfConsoleInputEvents(m_hin, &eventsCount);
@@ -72,7 +93,7 @@ namespace cgc {
     size_t rows = std::max(bottom - top, 0);
     size_t columns = std::max(right - left, 0);
 
-    return std::make_pair(rows, columns);
+    return std::make_pair(rows + 1, columns + 1); // + 1 for real size.
   }
   void WindowsConsole::setSize(size_t rows, size_t columns) {
     // TODO: Fix resizing window and buffer
@@ -182,6 +203,8 @@ namespace cgc {
     auto [rows, columns] = getSize();
     if (rows != m_lastRows || columns != m_lastColumns) {
       events.push_back(std::make_shared<WindowResizedEvent>(rows, columns, m_lastRows, m_lastColumns));
+
+      SetConsoleScreenBufferSize(m_hout, { (SHORT)columns, (SHORT)rows});
 
       m_lastRows = rows;
       m_lastColumns = columns;
