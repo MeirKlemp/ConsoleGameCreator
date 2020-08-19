@@ -31,8 +31,7 @@ namespace cgc {
 
     template <class... Args>
     size_t writef(size_t row, size_t column, const std::string& str, Style style, Args&&... args) {
-      CGC_ASSERT(row < m_rows, "row is out of bounds.");
-      CGC_ASSERT(column < m_columns, "column is out of bounds.");
+      if (row >= m_rows || column >= m_columns) return 0;
 
       std::string formatted = fmt::format(str, args...);
       return write(row, column, formatted, style);

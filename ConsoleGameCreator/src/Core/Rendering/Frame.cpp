@@ -75,15 +75,13 @@ namespace cgc {
   }
 
   void Frame::set(size_t row, size_t column, const StyledChar& val) {
-    CGC_ASSERT(row < m_rows, "row is out of bounds");
-    CGC_ASSERT(column < m_columns, "column is out of bounds");
+    if (row >= m_rows || column >= m_columns) return;
 
     m_buffer[row][column] = val;
   }
 
   size_t Frame::write(size_t row, size_t column, const std::string& str, Style style) {
-    CGC_ASSERT(row < m_rows, "row is out of bounds.");
-    CGC_ASSERT(column < m_columns, "column is out of bounds.");
+    if (row >= m_rows || column >= m_columns) return 0;
 
     CGC_STRING cgcstr = str;
     size_t maxColLen = m_columns - column;
@@ -102,12 +100,11 @@ namespace cgc {
     return written;
   }
   size_t Frame::write(size_t row, size_t column, const StyledStrings& strings) {
-    CGC_ASSERT(row < m_rows, "row is out of bounds.");
-    CGC_ASSERT(column < m_columns, "column is out of bounds.");
+    if (row >= m_rows || column >= m_columns) return 0;
 
     // Write every string with its style.
     size_t written = 0, colwritten = 0;
-    for (const auto[str, style] : strings) {
+    for (const auto [str, style] : strings) {
       size_t wr = write(row, column + colwritten, str, style);
       written += wr; colwritten += wr;
 
@@ -144,7 +141,7 @@ namespace cgc {
   }
 
   void Frame::setBuffer(const StyledChar& defaultChar) {
-    m_buffer = new StyledChar* [m_rows];
+    m_buffer = new StyledChar * [m_rows];
     for (size_t r = 0; r < m_rows; r++) {
       m_buffer[r] = new StyledChar[m_columns];
       for (size_t c = 0; c < m_columns; c++) {
@@ -153,7 +150,7 @@ namespace cgc {
     }
   }
   void Frame::setBuffer(StyledChar** buffer) {
-    m_buffer = new StyledChar* [m_rows];
+    m_buffer = new StyledChar * [m_rows];
     for (size_t r = 0; r < m_rows; r++) {
       m_buffer[r] = new StyledChar[m_columns];
       for (size_t c = 0; c < m_columns; c++) {
@@ -163,7 +160,7 @@ namespace cgc {
   }
 
   void Frame::setBuffer(const Frame& frame, const StyledChar& defaultChar) {
-    m_buffer = new StyledChar* [m_rows];
+    m_buffer = new StyledChar * [m_rows];
     for (size_t r = 0; r < m_rows; r++) {
       m_buffer[r] = new StyledChar[m_columns];
       for (size_t c = 0; c < m_columns; c++) {

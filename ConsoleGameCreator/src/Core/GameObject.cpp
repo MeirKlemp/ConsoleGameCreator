@@ -2,13 +2,6 @@
 #include "GameObject.h"
 #include "Application.h"
 
-#include "Core/Events/KeyPressedEvent.h"
-#include "Core/Events/KeyTypedEvent.h"
-#include "Core/Events/MouseClickedEvent.h"
-#include "Core/Events/MouseMovedEvent.h"
-#include "Core/Events/MouseScrolledEvent.h"
-#include "Core/Events/WindowResizedEvent.h"
-
 namespace cgc {
   Application& GameObject::application() {
     return *Application::get();
@@ -20,84 +13,39 @@ namespace cgc {
     return Application::get()->time();
   }
 
-  void GameObject::destroy() {
-    if (parent) {
-      auto begin = parent->m_gameObjects.begin();
-      auto end = parent->m_gameObjects.end();
-      for (auto it = begin; it != end; ++it) {
-        if (it->m_gameobject == this) {
-          m_gameObjects.erase(it);
-        }
-      }
-
-      begin = parent->m_guiObjects.begin();
-      end = parent->m_guiObjects.end();
-      for (auto it = begin; it != end; ++it) {
-        if (it->m_gameobject == this) {
-          m_guiObjects.erase(it);
-        }
-      }
-    }
-  }
-
-  ScriptableGameObject& ScriptableGameObject::operator=(const ScriptableGameObject& rhs) {
-    if (m_deleteGameObject) m_deleteGameObject();
-    m_initGameObject = rhs.m_initGameObject;
-    m_deleteGameObject = rhs.m_deleteGameObject;
-    m_start = rhs.m_start;
-    m_update = rhs.m_update;
-    m_end = rhs.m_end;
-    m_gameobject = nullptr;
-    return *this;
-  }
-
-  ScriptableGameObject& ScriptableGameObject::operator=(ScriptableGameObject&& rhs) noexcept {
-    m_initGameObject = rhs.m_initGameObject;
-    m_deleteGameObject = rhs.m_deleteGameObject;
-    m_start = rhs.m_start;
-    m_update = rhs.m_update;
-    m_end = rhs.m_end;
-    m_gameobject = rhs.m_gameobject;
-    return *this;
-  }
-
   void ScriptableGameObject::update(Frame& frame) {
-    CGC_ASSERT(m_gameobject, "GameObject didn't started")
-      if (m_update) m_update(frame);
+    if (m_update) m_update(frame);
 
-    auto begin = m_gameobject->m_gameObjects.begin();
-    auto end = m_gameobject->m_gameObjects.end();
+    auto begin = m_gameobject.m_gameObjects.begin();
+    auto end = m_gameobject.m_gameObjects.end();
     for (auto it = begin; it != end; ++it) {
-      it->update(frame);
+      (*it)->update(frame);
     }
 
-    begin = m_gameobject->m_guiObjects.begin();
-    end = m_gameobject->m_guiObjects.end();
+    begin = m_gameobject.m_guiObjects.begin();
+    end = m_gameobject.m_guiObjects.end();
     for (auto it = begin; it != end; ++it) {
-      it->update(frame);
+      (*it)->update(frame);
     }
 
     if (m_updateGui) m_updateGui(frame);
   }
   void ScriptableGameObject::end() {
-    CGC_ASSERT(m_gameobject, "GameObject didn't started")
     if (m_end) m_end();
 
-    auto begin = m_gameobject->m_gameObjects.begin();
-    auto end = m_gameobject->m_gameObjects.end();
+    auto begin = m_gameobject.m_gameObjects.begin();
+    auto end = m_gameobject.m_gameObjects.end();
     for (auto it = begin; it != end; ++it) {
-      it->end();
+      (*it)->end();
     }
 
-    begin = m_gameobject->m_guiObjects.begin();
-    end = m_gameobject->m_guiObjects.end();
+    begin = m_gameobject.m_guiObjects.begin();
+    end = m_gameobject.m_guiObjects.end();
     for (auto it = begin; it != end; ++it) {
-      it->end();
+      (*it)->end();
     }
   }
   void ScriptableGameObject::onEvents(std::vector<std::shared_ptr<Event>>& events) {
-    CGC_ASSERT(m_gameobject, "GameObject didn't started")
-
     auto begin = events.begin();
     auto end = events.end();
     for (auto it = begin; it != end; ++it) {
@@ -114,16 +62,16 @@ namespace cgc {
       }
     }
 
-    auto rbegin = m_gameobject->m_guiObjects.rbegin();
-    auto rend = m_gameobject->m_guiObjects.rend();
+    auto rbegin = m_gameobject.m_guiObjects.rbegin();
+    auto rend = m_gameobject.m_guiObjects.rend();
     for (auto it = rbegin; it != rend; ++it) {
-      it->onEvents(events);
+      (*it)->onEvents(events);
     }
 
-    rbegin = m_gameobject->m_gameObjects.rbegin();
-    rend = m_gameobject->m_gameObjects.rend();
+    rbegin = m_gameobject.m_gameObjects.rbegin();
+    rend = m_gameobject.m_gameObjects.rend();
     for (auto it = rbegin; it != rend; ++it) {
-      it->onEvents(events);
+      (*it)->onEvents(events);
     }
   }
 }

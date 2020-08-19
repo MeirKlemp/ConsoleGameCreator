@@ -13,7 +13,7 @@ namespace cgc {
   void Application::run() {
     running = true;
     m_time.start();
-    m_gameobject.start();
+    m_gameobject->start();
 
     while (running) {
       m_time.update();
@@ -23,13 +23,13 @@ namespace cgc {
 
       Input::onEvents(events);
 
-      m_gameobject.onEvents(events);
-      m_gameobject.update(frame);
+      m_gameobject->onEvents(events);
+      m_gameobject->update(frame);
 
       m_console->draw(frame);
     }
 
-    m_gameobject.end();
+    m_gameobject->end();
   }
   void Application::close() {
     running = false;

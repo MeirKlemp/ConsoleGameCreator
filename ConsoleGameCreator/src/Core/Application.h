@@ -14,10 +14,10 @@ namespace cgc {
     Console& console();
     const Time& time() const;
 
-    template<class T, class... Args>
-    inline void setGameObject(Args&... args) {
-      m_gameobject.bind<T>(args...);
-      if (running) m_gameobject.start();
+    template<class T>
+    inline void setGameObject(T& gameobject) {
+      m_gameobject.reset(new ScriptableGameObject(gameobject));
+      if (running) m_gameobject->start();
     }
 
     static Application* get();
@@ -26,7 +26,7 @@ namespace cgc {
   private:
     bool running = false;
     std::unique_ptr<Console> m_console;
-    ScriptableGameObject m_gameobject;
+    std::unique_ptr<ScriptableGameObject> m_gameobject;
     Time m_time;
 
     static Application* s_instance;

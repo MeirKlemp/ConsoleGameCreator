@@ -24,6 +24,17 @@ namespace cgc {
     }
   }
 
+  void Console::clear() {
+    auto [rows, columns] = getSize();
+
+    for (size_t r = 0; r < rows; r++) {
+      for (size_t c = 0; c < columns; c++) {
+        m_frame.set(r, c, ' ');
+        drawChar(r, c, ' ');
+      }
+    }
+  }
+
   void Console::drawChar(size_t row, size_t column, const StyledChar& schar) {
     setCursorPosition(row, column);
     schar.print();

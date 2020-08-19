@@ -9,6 +9,7 @@ namespace cgc {
 
     virtual Frame newFrame() const;
     virtual void draw(const Frame& newFrame);
+    virtual void clear();
 
     virtual std::vector <std::shared_ptr<Event>> events() = 0;
     virtual std::string getTitle() const = 0;
